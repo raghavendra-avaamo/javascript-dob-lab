@@ -1,7 +1,7 @@
 // B/ parse various valid date lengths:
 const parse_valid_length_date = (numerical_date_input) => {
   console.log(
-    "S02B_Input Check:",
+    "JS02B_Input Check:",
     numerical_date_input,
     typeof numerical_date_input
   );
@@ -19,10 +19,43 @@ const parse_valid_length_date = (numerical_date_input) => {
   }
 };
 
+const eigth_to_epoch = (eigth_digit_string_input) => {
+  // validate input length before using function - does not error handle for invalid input length
+  // expects a eigth digit number in string format
+  // MM-DD-YYYY
+
+  //     capture month -----------------------------------------------------
+  const supposed_month = eigth_digit_string_input.slice(0, 2);
+  console.log("supposed_month: ", supposed_month, typeof supposed_month);
+
+  // capture day -----------------------------------------------------
+  const supposed_day = eigth_digit_string_input.slice(2, 4);
+  console.log("supposed_day: ", supposed_day, typeof supposed_day);
+
+  // capture year -----------------------------------------------------
+  const supposed_year = eigth_digit_string_input.slice(4);
+  console.log("supposed_year: ", supposed_year, typeof supposed_year);
+
+  // validate and return epoch date -----------------------------------
+  if (
+    validate_month_string(supposed_month) &&
+    validate_day_string(supposed_month, supposed_day) &&
+    is_valid_leap_year_date(supposed_month, supposed_day, supposed_year)
+  ) {
+    return custom_date_string_to_epcoh(
+      supposed_month,
+      supposed_day,
+      supposed_year
+    );
+  } else {
+    return false;
+  }
+};
+
 const four_to_epoch = (four_digit_string_input) => {
   console.log("received input: ", four_digit_string_input);
 
-  // validate input before using function - does not error handle
+  // validate input length before using function - does not error handle
   // expects a four digit number in string format
 
   //     capture month -----------------------------------------------------
@@ -33,28 +66,26 @@ const four_to_epoch = (four_digit_string_input) => {
   const supposed_day = four_digit_string_input[1];
   console.log("supposed_day: ", supposed_day, typeof supposed_day);
 
-  //     capture year -----------------------------------------------------
-  const supposed_short_year = new Date(four_digit_string_input.slice(2, 4))
-    .getFullYear()
-    .toString();
+  // capture year -----------------------------------------------------
+  const supposed_short_year = four_digit_string_input.slice(2, 4);
+  console.log('supposed_short_year: ', supposed_short_year)
+  const supposed_full_year = short_to_full_year(supposed_short_year);
+  console.log("supposed_full_year: ", supposed_full_year, typeof supposed_full_year);
 
-  const supposed_full_year = short_to_full_year(supposed_short_year)
-
-  console.log("supposed_year: ", supposed_year, typeof supposed_year);
-
-
-  //     assemble and return validated epoch date -----------------------------------------
-  const assembled_date_string =
-    supposed_month + "-" + supposed_day + "-" + supposed_year;
-  console.log("assembled_date_string: ", assembled_date_string);
-
-  const epoch_date_number = Date.parse(assembled_date_string);
-  console.log(
-    "epoch_date_number: ",
-    epoch_date_number,
-    typeof epoch_date_number
-  );
-  return epoch_date_number;
+  // validate and return epoch date -----------------------------------
+  if (
+    validate_month_string(supposed_month) &&
+    validate_day_string(supposed_month, supposed_day) &&
+    is_valid_leap_year_date(supposed_month, supposed_day, supposed_full_year)
+  ) {
+    return custom_date_string_to_epcoh(
+      supposed_month,
+      supposed_day,
+      supposed_full_year
+    );
+  } else {
+    return false;
+  }
 };
 
 const process_five = (five_digit_string_input) => {
@@ -73,60 +104,10 @@ const process_seven = (seven_digit_string_input) => {
   pass;
 };
 
-const eigth_to_epoch = (eigth_digit_string_input) => {
-  // validate input length before using function - does not error handle for invalid input length 
-  // expects a eigth digit number in string format 
-  // MM-DD-YYYY
+/* DOB HELPER FUNCTIONS ===================================================================== */
 
-  //     capture month -----------------------------------------------------
-  const supposed_month = eigth_digit_string_input.slice(0, 2);
-  console.log("supposed_month: ", supposed_month, typeof supposed_month);
 
-  // capture day -----------------------------------------------------
-  const supposed_day = eigth_digit_string_input.slice(2, 4);
-  console.log("supposed_day: ", supposed_day, typeof supposed_day);
-
-  //     capture year -----------------------------------------------------
-  const supposed_year = eigth_digit_string_input.slice(4);
-  console.log("supposed_year: ", supposed_year, typeof supposed_year);
-
-  if (
-    validate_month_string(supposed_month) &&
-    validate_day_string(supposed_day, supposed_month) &&
-    is_valid_leap_year_date(supposed_day, supposed_month, supposed_year)
-  ) {
-    //     assemble and return validated epoch date -----------------------------------------
-    const assembled_date_string =
-      supposed_month + "-" + supposed_day + "-" + supposed_year;
-    console.log("assembled_date_string: ", assembled_date_string);
-
-    const epoch_date_number = Date.parse(assembled_date_string);
-    console.log(
-      "epoch_date_number: ",
-      epoch_date_number,
-      typeof epoch_date_number
-    );
-    return epoch_date_number;
-  } else {
-    return false;
-  }
-};
-
-/* DOB HELPER FUNCTIONS ---------------------------------------- */
-
-// A1/ leap year tester function:
-const is_leap_year = (int_year) => {
-  if (int_year % 400 === 0) {
-    return true;
-  } else if (int_year % 100 === 0) {
-    return false;
-  } else if (int_year % 4 === 0) {
-    return true;
-  } else {
-    return false;
-  }
-};
-// A2/ month string tester function:
+// A1/ month string tester function:
 const validate_month_string = (month_string) => {
   const numerical_supposed_month = parseInt(month_string);
 
@@ -137,8 +118,8 @@ const validate_month_string = (month_string) => {
 
   return true;
 };
-// A3/ day string tester function:
-const validate_day_string = (day_string, month_string) => {
+// A1/ day string tester function:
+const validate_day_string = (month_string, day_string) => {
   const numerical_supposed_month = parseInt(month_string);
 
   const numerical_supposed_day = parseInt(day_string);
@@ -172,10 +153,10 @@ const validate_day_string = (day_string, month_string) => {
 
   return true;
 };
-// A4/ valid leap year date tester function:
+// A3/ valid leap year date tester function:
 const is_valid_leap_year_date = (
-  day_string,
   month_string,
+  day_string,
   full_year_string
 ) => {
   //     validate leap year date ----------------------------------------------
@@ -199,34 +180,38 @@ const is_valid_leap_year_date = (
   return true;
 };
 
-// B1/ two digit year to gour digit year estimator function:
-const short_to_full_year = (short_year_string) => {
 
-  const numerical_short_year = parseInt(short_year_string)
+// B1/ leap year tester function:
+const is_leap_year = (int_year) => {
+  if (int_year % 400 === 0) {
+    return true;
+  } else if (int_year % 100 === 0) {
+    return false;
+  } else if (int_year % 4 === 0) {
+    return true;
+  } else {
+    return false;
+  }
+};
+// B2/ two digit year to gour digit year estimator function:
+const short_to_full_year = (short_year_string) => {
+  // expects two digit year string
+  // returns four digit year string
+
+  const numerical_short_year = parseInt(short_year_string);
 
   if (numerical_short_year > 1 && numerical_short_year < 32) {
-    return '20' + short_year_string
+    return "20" + short_year_string;
   } else {
-    return (new Date(short_year_string).getFullYear()).toString()
+    return new Date(short_year_string).getFullYear().toString();
   }
-
-}
-
-// C1/ 5 digit tester - A (M-DD-YY)
-const five_digit_mddyy_handler = (five_digit_mddyy_input) => {
-  //     capture month -----------------------------------------------------
-  const supposed_month = five_digit_mddyy_input[0];
-  console.log("supposed_month: ", supposed_month, typeof supposed_month);
-
-  // capture day -----------------------------------------------------
-  const supposed_day = five_digit_mddyy_input.slice(1, 3);
-  console.log("supposed_day: ", supposed_day, typeof supposed_day);
-
-  // capture year -----------------------------------------------------
-  // const supposed_year = (new Date(five_digit_mddyy_input.slice(3)).getFullYear()).toString();
-  const supposed_year = five_digit_mddyy_input.slice(3);
-  console.log("supposed_year: ", supposed_year, typeof supposed_year);
-
+};
+// B3/ two digit year to gour digit year estimator function:
+const custom_date_string_to_epcoh = (
+  supposed_month,
+  supposed_day,
+  supposed_year
+) => {
   //     assemble and return validated epoch date -----------------------------------------
   const assembled_date_string =
     supposed_month + "-" + supposed_day + "-" + supposed_year;
@@ -240,9 +225,198 @@ const five_digit_mddyy_handler = (five_digit_mddyy_input) => {
   );
   return epoch_date_number;
 };
-// C2/ 5 digit tester - A (MM-D-YY)
 
-// FUNCTION CALLS WITH DUMMY DATA -------------------------------------------------------------------
+
+// C1/ 5 digit tester - A (M-DD-YY)
+const five_digit_mddyy_handler = (five_digit_mddyy_input) => {
+  // capture month -----------------------------------------------------
+  const supposed_month = five_digit_mddyy_input[0];
+  console.log("supposed_month: ", supposed_month, typeof supposed_month);
+
+  // capture day -----------------------------------------------------
+  const supposed_day = five_digit_mddyy_input.slice(1, 3);
+  console.log("supposed_day: ", supposed_day, typeof supposed_day);
+
+  // capture year -----------------------------------------------------
+  const supposed_short_year = five_digit_mddyy_input.slice(3);
+  console.log('supposed_short_year: ', supposed_short_year)
+  const supposed_full_year = short_to_full_year(supposed_short_year);
+  console.log("supposed_full_year: ", supposed_full_year, typeof supposed_full_year);
+
+  if (
+    validate_month_string(supposed_month) &&
+    validate_day_string(supposed_month, supposed_day) &&
+    is_valid_leap_year_date(supposed_month, supposed_day, supposed_full_year)
+  ) {
+    return custom_date_string_to_epcoh(
+      supposed_month,
+      supposed_day,
+      supposed_full_year
+    );
+  } else {
+    return false;
+  }
+};
+// C2/ 5 digit tester - B (MM-D-YY)
+const five_digit_mmdyy_handler = (five_digit_mmdyy_input) => {
+
+  // capture month -----------------------------------------------------
+  const supposed_month = five_digit_mmdyy_input.slice(0, 2);
+  console.log("supposed_month: ", supposed_month, typeof supposed_month);
+
+  // capture day -----------------------------------------------------
+  const supposed_day = five_digit_mmdyy_input[2];
+  console.log("supposed_day: ", supposed_day, typeof supposed_day);
+
+  // capture year -----------------------------------------------------
+  const supposed_short_year = five_digit_mmdyy_input.slice(3);
+  console.log('supposed_short_year: ', supposed_short_year)
+  const supposed_full_year = short_to_full_year(supposed_short_year);
+  console.log("supposed_full_year: ", supposed_full_year, typeof supposed_full_year);
+
+  if (
+    validate_month_string(supposed_month) &&
+    validate_day_string(supposed_month, supposed_day) &&
+    is_valid_leap_year_date(supposed_month, supposed_day, supposed_full_year)
+  ) {
+    return custom_date_string_to_epcoh(
+      supposed_month,
+      supposed_day,
+      supposed_full_year
+    );
+  } else {
+    return false;
+  }
+};
+
+
+// D1/ 6 digit tester - A (MM-DD-YY)
+const six_digit_mmddyy_handler = (six_digit_mmddyy_input) => {
+  // validate input length before using function - does not error handle
+  // expects a six digit number in string format
+
+  //     capture month -----------------------------------------------------
+  const supposed_month = six_digit_mmddyy_input.slice(0, 2);
+  console.log("supposed_month: ", supposed_month, typeof supposed_month);
+
+  // capture day -----------------------------------------------------
+  const supposed_day = six_digit_mmddyy_input.slice(2, 4);
+  console.log("supposed_day: ", supposed_day, typeof supposed_day);
+
+  // capture year -----------------------------------------------------
+  const supposed_short_year = six_digit_mmddyy_input.slice(4);
+  console.log('supposed_short_year: ', supposed_short_year)
+  const supposed_full_year = short_to_full_year(supposed_short_year);
+  console.log("supposed_full_year: ", supposed_full_year, typeof supposed_full_year);
+
+  // validate and return epoch date -----------------------------------
+  if (
+    validate_month_string(supposed_month) &&
+    validate_day_string(supposed_month, supposed_day) &&
+    is_valid_leap_year_date(supposed_month, supposed_day, supposed_full_year)
+  ) {
+    return custom_date_string_to_epcoh(
+      supposed_month,
+      supposed_day,
+      supposed_full_year
+    );
+  } else {
+    return false;
+  }
+}
+// D2/ 6 digit tester - B (M-D-YYYY)
+const six_digit_mdyyyy_handler = (six_digit_mdyyyy_input) => {
+  // validate input length before using function - does not error handle
+  // expects a six digit number in string format
+
+  //     capture month -----------------------------------------------------
+  const supposed_month = six_digit_mdyyyy_input[0];
+  console.log("supposed_month: ", supposed_month, typeof supposed_month);
+
+  // capture day -----------------------------------------------------
+  const supposed_day = six_digit_mdyyyy_input[1];
+  console.log("supposed_day: ", supposed_day, typeof supposed_day);
+
+  // capture year -----------------------------------------------------
+  const supposed_full_year = six_digit_mdyyyy_input.slice(2);
+  console.log("supposed_full_year: ", supposed_full_year, typeof supposed_full_year);
+
+  // validate and return epoch date -----------------------------------
+  if (
+    validate_month_string(supposed_month) &&
+    validate_day_string(supposed_month, supposed_day) &&
+    is_valid_leap_year_date(supposed_month, supposed_day, supposed_full_year)
+  ) {
+    return custom_date_string_to_epcoh(
+      supposed_month,
+      supposed_day,
+      supposed_full_year
+    );
+  } else {
+    return false;
+  }
+}
+
+// E1/ 7 digit tester - A (MM-D-YYYY)
+const seven_digit_mmdyyyy_handler = (seven_digit_mmdyyyy_input) => {
+  // capture month -----------------------------------------------------
+  const supposed_month = seven_digit_mmdyyyy_input.slice(0, 2);
+  console.log("supposed_month: ", supposed_month, typeof supposed_month);
+
+  // capture day -----------------------------------------------------
+  const supposed_day = seven_digit_mmdyyyy_input[2];
+  console.log("supposed_day: ", supposed_day, typeof supposed_day);
+
+  // capture year -----------------------------------------------------
+  const supposed_full_year = seven_digit_mmdyyyy_input.slice(3);
+  console.log("supposed_full_year: ", supposed_full_year, typeof supposed_full_year);
+
+  if (
+    validate_month_string(supposed_month) &&
+    validate_day_string(supposed_month, supposed_day) &&
+    is_valid_leap_year_date(supposed_month, supposed_day, supposed_full_year)
+  ) {
+    return custom_date_string_to_epcoh(
+      supposed_month,
+      supposed_day,
+      supposed_full_year
+    );
+  } else {
+    return false;
+  }
+}
+// E2/ 7 digit tester - B (M-DD-YYYY)
+const seven_digit_mddyyyy_handler = (seven_digit_mddyyyy_input) => {
+  // capture month -----------------------------------------------------
+  const supposed_month = seven_digit_mddyyyy_input[0];
+  console.log("supposed_month: ", supposed_month, typeof supposed_month);
+
+  // capture day -----------------------------------------------------
+  const supposed_day = seven_digit_mddyyyy_input.slice(1, 3);
+  console.log("supposed_day: ", supposed_day, typeof supposed_day);
+
+  // capture year -----------------------------------------------------
+  const supposed_full_year = seven_digit_mddyyyy_input.slice(3);
+  console.log("supposed_full_year: ", supposed_full_year, typeof supposed_full_year);
+
+  if (
+    validate_month_string(supposed_month) &&
+    validate_day_string(supposed_month, supposed_day) &&
+    is_valid_leap_year_date(supposed_month, supposed_day, supposed_full_year)
+  ) {
+    return custom_date_string_to_epcoh(
+      supposed_month,
+      supposed_day,
+      supposed_full_year
+    );
+  } else {
+    return false;
+  }
+}
+
+/* TEST CASES =================================================================================== */
+
+// PRIMARY FUNCTION TESTS WITH DUMMY DATA -------------------------------------------------------------------
 
 /* 8 DIGIT CASES ---------------------------------------------- */
 // valid date
@@ -252,12 +426,92 @@ const five_digit_mddyy_handler = (five_digit_mddyy_input) => {
 // console.log(parse_valid_length_date('12332000'))
 
 /* 4 DIGIT CASES ---------------------------------------------- */
-// process_four("9909")
+// valid date
 // parse_valid_length_date("9909");
 
 // invaid date
-// process_four("0909")
 // console.log(parse_valid_length_date("0909"));
 
 /* 5 DIGIT CASES ---------------------------------------------- */
+// valid date
+// invaid date
+
+// HELPER FUNCTION TESTS WITH DUMMY DATA -------------------------------------------------------------------
+
+/* LEAP YEAR TEST ---------------------------------------------- */
+// console.log(is_leap_year(2000))
+// console.log(is_leap_year(2001))
+
+/* 2-DIGIT TO 4-DIGIT YEAR CONVERTOR ---------------------------------------------- */
+// console.log(short_to_full_year('01'))
+// console.log(short_to_full_year('02'))
+// console.log(short_to_full_year('03'))
+// console.log(short_to_full_year('31'))
+// console.log(short_to_full_year('32'))
+// console.log(short_to_full_year('75'))
+// console.log(short_to_full_year('56'))
+// console.log(short_to_full_year('50'))
+
+/* 4 DIGIT CASES ---------------------------------------------- */
+
+// vaid date
+// four_to_epoch("9909");
+
+// invaid date
+// four_to_epoch("0909")
+
+/* 5 DIGIT CASES ---------------------------------------------- */
+// valid date
 // five_digit_mddyy_handler("91308");
+// five_digit_mddyy_handler("12108");
+// five_digit_mddyy_handler("13150");
+
+// invaid date
+// five_digit_mddyy_handler("23008");
+// five_digit_mddyy_handler("54308");
+
+// valid date
+// five_digit_mmdyy_handler("12108");
+
+
+// invaid date
+// five_digit_mmdyy_handler("91308");
+// five_digit_mmdyy_handler("23008");
+// five_digit_mmdyy_handler("54308");
+
+/* 6 DIGIT CASES ---------------------------------------------- */
+// valid date
+// six_digit_mmddyy_handler("111308");
+// six_digit_mmddyy_handler("112060");
+// six_digit_mmddyy_handler("121008");
+// six_digit_mmddyy_handler("122554");
+
+// invaid date
+// six_digit_mmddyy_handler("233308");
+// six_digit_mmddyy_handler("113208");
+// six_digit_mmddyy_handler("561983");
+// six_digit_mmddyy_handler("731989");
+
+// valid date
+// six_digit_mdyyyy_handler("121908");
+// six_digit_mdyyyy_handler("922018");
+
+// invaid date
+
+/* 7 DIGIT CASES ---------------------------------------------- */
+// valid date
+// seven_digit_mmdyyyy_handler("1112008");
+// seven_digit_mmdyyyy_handler("1221960");
+
+// invaid date
+// seven_digit_mmdyyyy_handler("1312018");
+// seven_digit_mmdyyyy_handler("2121960");
+
+// valid date
+// seven_digit_mddyyyy_handler("9301943")
+// seven_digit_mddyyyy_handler("2212019")
+
+// invaid date
+// seven_digit_mddyyyy_handler("2312019")
+// seven_digit_mddyyyy_handler("9331980")
+// seven_digit_mddyyyy_handler("2291983")
