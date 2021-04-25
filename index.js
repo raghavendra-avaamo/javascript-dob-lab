@@ -1,4 +1,4 @@
-// B/ parse various valid date lengths:
+// B1/ routine to parse various valid date lengths:
 const parse_valid_length_date = (numerical_date_input) => {
   console.log(
     "JS02B_Input Check:",
@@ -17,8 +17,17 @@ const parse_valid_length_date = (numerical_date_input) => {
   if (numerical_date_input.length === 5) {
     return process_five(numerical_date_input);
   }
+
+  if (numerical_date_input.length === 6) {
+    return process_six(numerical_date_input);
+  }
+
+  if (numerical_date_input.length === 7) {
+    return process_seven(numerical_date_input);
+  }
 };
 
+// B2/ subroutines to parse various date lengths
 const eigth_to_epoch = (eigth_digit_string_input) => {
   // validate input length before using function - does not error handle for invalid input length
   // expects a eigth digit number in string format
@@ -68,9 +77,13 @@ const four_to_epoch = (four_digit_string_input) => {
 
   // capture year -----------------------------------------------------
   const supposed_short_year = four_digit_string_input.slice(2, 4);
-  console.log('supposed_short_year: ', supposed_short_year)
+  console.log("supposed_short_year: ", supposed_short_year);
   const supposed_full_year = short_to_full_year(supposed_short_year);
-  console.log("supposed_full_year: ", supposed_full_year, typeof supposed_full_year);
+  console.log(
+    "supposed_full_year: ",
+    supposed_full_year,
+    typeof supposed_full_year
+  );
 
   // validate and return epoch date -----------------------------------
   if (
@@ -89,23 +102,150 @@ const four_to_epoch = (four_digit_string_input) => {
 };
 
 const process_five = (five_digit_string_input) => {
-  // validate input before using function - does not error handle
-  // expects a five digit number in string format
-  // expected formats
-  // M-DD-YY
-  // MM-D-YY
+  // neither M-DD-YY or MM-D-YY
+  if (
+    !five_digit_mddyy_handler(five_digit_string_input) &&
+    !five_digit_mmdyy_handler(five_digit_string_input)
+  ) {
+    return false;
+  } else {
+    // both M-DD-YY and MM-D-YY
+    if (
+      five_digit_mddyy_handler(five_digit_string_input) &&
+      five_digit_mmdyy_handler(five_digit_string_input)
+    ) {
+      return [
+        five_digit_mddyy_handler(five_digit_string_input),
+        five_digit_mmdyy_handler(five_digit_string_input),
+      ];
+    }
+    // M-DD-YY
+    else if (
+      five_digit_mddyy_handler(five_digit_string_input) &&
+      !five_digit_mmdyy_handler(five_digit_string_input)
+    ) {
+      return five_digit_mddyy_handler(five_digit_string_input);
+    }
+    // MM-D-YY
+    else if (
+      !five_digit_mddyy_handler(five_digit_string_input) &&
+      five_digit_mmdyy_handler(five_digit_string_input)
+    ) {
+      return five_digit_mmdyy_handler(five_digit_string_input);
+    }
+    // exception
+    else {
+      console.log("something went wrong in procesing five digit string input!");
+      return false;
+    }
+  }
 };
 
 const process_six = (six_digit_string_input) => {
-  pass;
+  // neither M-DD-YY or MM-D-YY
+  if (
+    !six_digit_mmddyy_handler(six_digit_string_input) &&
+    !six_digit_mdyyyy_handler(six_digit_string_input)
+  ) {
+    return false;
+  } else {
+    // both MM-DD-YY and M-D-YYYY
+    if (
+      six_digit_mmddyy_handler(six_digit_string_input) &&
+      six_digit_mdyyyy_handler(six_digit_string_input)
+    ) {
+      return [
+        six_digit_mmddyy_handler(six_digit_string_input),
+        six_digit_mdyyyy_handler(six_digit_string_input),
+      ];
+    }
+    // MM-DD-YY
+    else if (
+      six_digit_mmddyy_handler(six_digit_string_input) &&
+      !six_digit_mdyyyy_handler(six_digit_string_input)
+    ) {
+      return six_digit_mmddyy_handler(six_digit_string_input);
+    }
+    // M-D-YYYY
+    else if (
+      !six_digit_mmddyy_handler(six_digit_string_input) &&
+      six_digit_mdyyyy_handler(six_digit_string_input)
+    ) {
+      return six_digit_mdyyyy_handler(six_digit_string_input);
+    }
+    // exception
+    else {
+      console.log("something went wrong in procesing six digit string input!");
+      return false;
+    }
+  }
 };
 
 const process_seven = (seven_digit_string_input) => {
-  pass;
+
+  // neither MM-D-YYYY or M-DD-YYYY
+  if (
+    !seven_digit_mmdyyyy_handler(seven_digit_string_input) &&
+    !seven_digit_mddyyyy_handler(seven_digit_string_input)
+  ) {
+    return false;
+  } else {
+    // both MM-D-YYYY and M-DD-YYYY
+    if (
+      seven_digit_mmdyyyy_handler(seven_digit_string_input) &&
+      seven_digit_mddyyyy_handler(seven_digit_string_input)
+    ) {
+      return [
+        seven_digit_mmdyyyy_handler(seven_digit_string_input),
+        seven_digit_mddyyyy_handler(seven_digit_string_input),
+      ];
+    }
+    // MM-D-YYYY
+    else if (
+      seven_digit_mmdyyyy_handler(seven_digit_string_input) &&
+      !seven_digit_mddyyyy_handler(seven_digit_string_input)
+    ) {
+      return seven_digit_mmdyyyy_handler(seven_digit_string_input);
+    }
+    // M-DD-YYYY
+    else if (
+      !seven_digit_mmdyyyy_handler(seven_digit_string_input) &&
+      seven_digit_mddyyyy_handler(seven_digit_string_input)
+    ) {
+      return seven_digit_mddyyyy_handler(seven_digit_string_input);
+    }
+    // exception
+    else {
+      console.log("something went wrong in procesing seven digit string input!");
+      return false;
+    }
+  }
 };
 
-/* DOB HELPER FUNCTIONS ===================================================================== */
+// C1/ dob range filter 
+const dob_range_filter_epoch_to_date = (epoch_input) => {
+  const epoch_now = Date.parse(new Date())
+  const epoch_120_years_ago = Date.parse(new Date()) - (120*365*24*60*60*1000)
 
+  if (epoch_input <= epoch_now && epoch_input > epoch_120_years_ago) {
+    return getDate(epoch_now)
+  }
+  else {
+    
+    if (epoch_input > epoch_now) {
+      return `future`
+    }
+
+    if (epoch_input < epoch_120_years_ago) {
+      return `past`
+    }
+
+    return false
+  }
+
+}
+
+/* DOB HELPER FUNCTIONS ===================================================================== */
 
 // A1/ month string tester function:
 const validate_month_string = (month_string) => {
@@ -180,7 +320,6 @@ const is_valid_leap_year_date = (
   return true;
 };
 
-
 // B1/ leap year tester function:
 const is_leap_year = (int_year) => {
   if (int_year % 400 === 0) {
@@ -226,7 +365,6 @@ const custom_date_string_to_epcoh = (
   return epoch_date_number;
 };
 
-
 // C1/ 5 digit tester - A (M-DD-YY)
 const five_digit_mddyy_handler = (five_digit_mddyy_input) => {
   // capture month -----------------------------------------------------
@@ -239,9 +377,13 @@ const five_digit_mddyy_handler = (five_digit_mddyy_input) => {
 
   // capture year -----------------------------------------------------
   const supposed_short_year = five_digit_mddyy_input.slice(3);
-  console.log('supposed_short_year: ', supposed_short_year)
+  console.log("supposed_short_year: ", supposed_short_year);
   const supposed_full_year = short_to_full_year(supposed_short_year);
-  console.log("supposed_full_year: ", supposed_full_year, typeof supposed_full_year);
+  console.log(
+    "supposed_full_year: ",
+    supposed_full_year,
+    typeof supposed_full_year
+  );
 
   if (
     validate_month_string(supposed_month) &&
@@ -259,7 +401,6 @@ const five_digit_mddyy_handler = (five_digit_mddyy_input) => {
 };
 // C2/ 5 digit tester - B (MM-D-YY)
 const five_digit_mmdyy_handler = (five_digit_mmdyy_input) => {
-
   // capture month -----------------------------------------------------
   const supposed_month = five_digit_mmdyy_input.slice(0, 2);
   console.log("supposed_month: ", supposed_month, typeof supposed_month);
@@ -270,9 +411,13 @@ const five_digit_mmdyy_handler = (five_digit_mmdyy_input) => {
 
   // capture year -----------------------------------------------------
   const supposed_short_year = five_digit_mmdyy_input.slice(3);
-  console.log('supposed_short_year: ', supposed_short_year)
+  console.log("supposed_short_year: ", supposed_short_year);
   const supposed_full_year = short_to_full_year(supposed_short_year);
-  console.log("supposed_full_year: ", supposed_full_year, typeof supposed_full_year);
+  console.log(
+    "supposed_full_year: ",
+    supposed_full_year,
+    typeof supposed_full_year
+  );
 
   if (
     validate_month_string(supposed_month) &&
@@ -289,7 +434,6 @@ const five_digit_mmdyy_handler = (five_digit_mmdyy_input) => {
   }
 };
 
-
 // D1/ 6 digit tester - A (MM-DD-YY)
 const six_digit_mmddyy_handler = (six_digit_mmddyy_input) => {
   // validate input length before using function - does not error handle
@@ -305,9 +449,13 @@ const six_digit_mmddyy_handler = (six_digit_mmddyy_input) => {
 
   // capture year -----------------------------------------------------
   const supposed_short_year = six_digit_mmddyy_input.slice(4);
-  console.log('supposed_short_year: ', supposed_short_year)
+  console.log("supposed_short_year: ", supposed_short_year);
   const supposed_full_year = short_to_full_year(supposed_short_year);
-  console.log("supposed_full_year: ", supposed_full_year, typeof supposed_full_year);
+  console.log(
+    "supposed_full_year: ",
+    supposed_full_year,
+    typeof supposed_full_year
+  );
 
   // validate and return epoch date -----------------------------------
   if (
@@ -323,7 +471,7 @@ const six_digit_mmddyy_handler = (six_digit_mmddyy_input) => {
   } else {
     return false;
   }
-}
+};
 // D2/ 6 digit tester - B (M-D-YYYY)
 const six_digit_mdyyyy_handler = (six_digit_mdyyyy_input) => {
   // validate input length before using function - does not error handle
@@ -339,7 +487,11 @@ const six_digit_mdyyyy_handler = (six_digit_mdyyyy_input) => {
 
   // capture year -----------------------------------------------------
   const supposed_full_year = six_digit_mdyyyy_input.slice(2);
-  console.log("supposed_full_year: ", supposed_full_year, typeof supposed_full_year);
+  console.log(
+    "supposed_full_year: ",
+    supposed_full_year,
+    typeof supposed_full_year
+  );
 
   // validate and return epoch date -----------------------------------
   if (
@@ -355,7 +507,7 @@ const six_digit_mdyyyy_handler = (six_digit_mdyyyy_input) => {
   } else {
     return false;
   }
-}
+};
 
 // E1/ 7 digit tester - A (MM-D-YYYY)
 const seven_digit_mmdyyyy_handler = (seven_digit_mmdyyyy_input) => {
@@ -369,7 +521,11 @@ const seven_digit_mmdyyyy_handler = (seven_digit_mmdyyyy_input) => {
 
   // capture year -----------------------------------------------------
   const supposed_full_year = seven_digit_mmdyyyy_input.slice(3);
-  console.log("supposed_full_year: ", supposed_full_year, typeof supposed_full_year);
+  console.log(
+    "supposed_full_year: ",
+    supposed_full_year,
+    typeof supposed_full_year
+  );
 
   if (
     validate_month_string(supposed_month) &&
@@ -384,7 +540,7 @@ const seven_digit_mmdyyyy_handler = (seven_digit_mmdyyyy_input) => {
   } else {
     return false;
   }
-}
+};
 // E2/ 7 digit tester - B (M-DD-YYYY)
 const seven_digit_mddyyyy_handler = (seven_digit_mddyyyy_input) => {
   // capture month -----------------------------------------------------
@@ -397,7 +553,11 @@ const seven_digit_mddyyyy_handler = (seven_digit_mddyyyy_input) => {
 
   // capture year -----------------------------------------------------
   const supposed_full_year = seven_digit_mddyyyy_input.slice(3);
-  console.log("supposed_full_year: ", supposed_full_year, typeof supposed_full_year);
+  console.log(
+    "supposed_full_year: ",
+    supposed_full_year,
+    typeof supposed_full_year
+  );
 
   if (
     validate_month_string(supposed_month) &&
@@ -412,7 +572,7 @@ const seven_digit_mddyyyy_handler = (seven_digit_mddyyyy_input) => {
   } else {
     return false;
   }
-}
+};
 
 /* TEST CASES =================================================================================== */
 
@@ -427,14 +587,47 @@ const seven_digit_mddyyyy_handler = (seven_digit_mddyyyy_input) => {
 
 /* 4 DIGIT CASES ---------------------------------------------- */
 // valid date
-// parse_valid_length_date("9909");
+// console.log(parse_valid_length_date("9909"));
 
 // invaid date
 // console.log(parse_valid_length_date("0909"));
 
 /* 5 DIGIT CASES ---------------------------------------------- */
 // valid date
+// console.log(parse_valid_length_date("91309"));
+// console.log(parse_valid_length_date("11111"))
+// console.log(parse_valid_length_date("12911"))
+
 // invaid date
+// console.log(parse_valid_length_date("23911"))
+// console.log(parse_valid_length_date("22911"))
+// console.log(parse_valid_length_date("94960"))
+
+/* 6 DIGIT CASES ---------------------------------------------- */
+// valid date
+// console.log(parse_valid_length_date("111308"));
+// console.log(parse_valid_length_date("112060"))
+// console.log(parse_valid_length_date("122554"))
+// console.log(parse_valid_length_date("121908"))
+// console.log(parse_valid_length_date("922018"))
+// console.log(parse_valid_length_date("113208"))
+
+// invaid date
+
+/* 6 DIGIT CASES ---------------------------------------------- */
+// valid date
+// console.log(parse_valid_length_date("1112008"))
+// console.log(parse_valid_length_date("1221960"))
+// console.log(parse_valid_length_date("9301943"))
+// console.log(parse_valid_length_date("2212019"))
+// console.log(parse_valid_length_date("1312018"))
+// console.log(parse_valid_length_date("2121960"))
+
+// invaid date
+// console.log(parse_valid_length_date("2291983"))
+// console.log(parse_valid_length_date("2312019"))
+// console.log(parse_valid_length_date("9331980"))
+
 
 // HELPER FUNCTION TESTS WITH DUMMY DATA -------------------------------------------------------------------
 
@@ -472,7 +665,6 @@ const seven_digit_mddyyyy_handler = (seven_digit_mddyyyy_input) => {
 
 // valid date
 // five_digit_mmdyy_handler("12108");
-
 
 // invaid date
 // five_digit_mmdyy_handler("91308");
